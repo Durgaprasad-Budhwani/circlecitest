@@ -13,10 +13,15 @@ jobs:
     steps:
       - checkout
 
-      # Install CocoaPods
+      # Install Visual Store
       - run:
           name: Install Visual Studio
           command: brew cask install visual-studio xamarin xamarin-jdk xamarin-ios xamarin-studio
+
+      # Install Restore Nuget Package
+      - run:
+          name: Install Nuget Package
+          command: /Library/Frameworks/Mono.framework/Versions/Current/Commands/nuget restore
 
       # Build the app and run tests
       - run:
