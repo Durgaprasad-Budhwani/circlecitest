@@ -23,10 +23,6 @@ jobs:
           name: Install Nuget Package
           command: /Library/Frameworks/Mono.framework/Versions/Current/Commands/nuget restore
 
-      # Install Restore Nuget Package
-      - run:
-          name: List nuget packages
-          command: cd packages && ls -la
       # Build the app and run tests
       - run:
           name: Build iOS Project
