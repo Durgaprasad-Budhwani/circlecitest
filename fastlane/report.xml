@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.002392">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: nuget restore ../CircleCITest.sln -verbosity detailed" time="2.926415">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: echo Hello" time="0.005963">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: msbuild /p:Configuration='Debug' /p:Platform='iPhoneSimulator' /p:IpaPackageDir='$HOME/Builds' /p:WarningLevel=0 /t:Build ../CircleCITest.sln" time="5.859297">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

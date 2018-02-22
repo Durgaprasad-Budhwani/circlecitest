@@ -1,0 +1,97 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  def nuget(sln)
+    sh "nuget restore #{sln} -verbosity detailed"
+  end
+
+  desc 'Release build with clean'
+  lane :release_build do
+    xamarin_build(
+        solution: '/Users/user/projects/buildAgent/work/1/Pro.sln',
+        platform: 'iPhone',
+        target: 'Clean',
+        project: 'subproject1,subproject2,subproject3',
+        build_type: 'Release',
+        print_all: true
+    )
+
+    xamarin_build(
+        solution: '/Users/user/projects/buildAgent/work/1/Pro.sln',
+        platform: 'iPhone',
+        target: 'Build',
+        build_type: 'Release',
+        print_all: false
+    )
+
+  end
+
+  desc 'Build xamarin project for debug and start nuunit tests'
+  lane :test do |options|
+    nuget('../CircleCITest.sln')
+
+    xamarin_build(
+      solution: 'CircleCITest.sln',
+      platform: 'iPhoneSimulator',
+      build_type: 'Debug',
+      target: 'Clean',
+      print_all: true
+    )
+    #sh "nunit-console #{options[:dll_file]}"
+  end
+
+  desc 'Build xamarin project for debug and start nuunit tests'
+  lane :build_debug do |options|
+    nuget('../CircleCITest.sln')
+    sh "echo Hello"
+    sh "msbuild /p:Configuration='Debug' /p:Platform='iPhoneSimulator' /p:IpaPackageDir='$HOME/Builds' /p:WarningLevel=0 /t:Build ../CircleCITest.sln"
+  end
+
+  desc 'Build xamarin release for iPhone with setting custom certificates and provision derived from match'
+  lane :release_custom_cert do |options|
+
+    provision_uuid = "ef857752-5177-4399-bf2e-1c889b4386a0"
+
+    # certificate from provision
+    cert = extract_certificate(
+      uuid: provision_uuid,
+      log_certificate: false
+    )
+
+    subject = Hash[cert.subject.to_a.map {|arr|  [arr[0], arr[1]]}]
+    name = subject['CN']
+
+    ENV['FL_XAMARIN_UPDATE_CONFIGURATION_XAMARIN_PROJECT'] = options[:csproj]
+    ENV['FL_XAMARIN_UPDATE_CONFIGURATION_TARGET'] = 'Release'
+    ENV['FL_XAMARIN_UPDATE_CONFIGURATION_PLATFORM'] = 'iPhone'
+
+    [
+      ['CodesignProvision', provision_uuid],
+      ['CodesignKey', name]
+    ].each do |kv|
+      xamarin_update_configuration(
+        property: kv[0],
+        value: kv[1]
+      )
+    end
+
+    xamarin_build(
+      solution: options[:sln],
+      platform: 'iPhone',
+      target: 'Clean',
+      build_type: 'Release',
+      print_all: false
+    )
+  end
+end
