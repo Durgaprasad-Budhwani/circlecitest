@@ -18,6 +18,10 @@ jobs:
           name: Install Visual Studio
           command: brew cask install visual-studio
 
+      - run:
+          name: Install xamarin fastlane plugin
+          command: fastlane add_plugin fastlane-plugin-xamarin_build
+
       # Build the app and run tests
       - run:
           name: Build and run tests
