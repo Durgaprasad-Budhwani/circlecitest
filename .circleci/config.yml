@@ -16,7 +16,7 @@ jobs:
       # Install CocoaPods
       - run:
           name: Install Visual Studio
-          command: brew cask install visual-studio
+          command: brew cask install visual-studio xamarin xamarin-jdk xamarin-ios xamarin-studio
 
       # Build the app and run tests
       - run:
